@@ -14,6 +14,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -54,9 +55,14 @@ private final ShooterSubsystem shoot = new ShooterSubsystem();
    * joysticks}.
    */
   private void configureBindings() {
-    xbox1.a().onTrue(new InstantCommand(
-      () -> {shoot.smOne.set(1);
-             shoot.smTwo.set(1);
+    (xbox1.rightTrigger()).onTrue(new InstantCommand(
+      () -> {shoot.smTwo.set(1);}
+      )).onTrue(new WaitCommand(3.0).andThen(
+        new InstantCommand(() -> 
+            {shoot.smOne.set(1);}))
+      ).onFalse(new InstantCommand(() -> {
+        shoot.smOne.set(0);
+        shoot.smTwo.set(0);
       }));
   }
 
