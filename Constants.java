@@ -40,5 +40,10 @@ public final class Constants {
     public static int xbox1 = 0;
     public static int xbox2 = 1;
   }
+  public static class PID {
+    public static int TurnP = 1;
+    public static int TurnI = 0;
+    public static int TurnD = 0;
+  }
   }
 }
