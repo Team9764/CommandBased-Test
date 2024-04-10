@@ -12,8 +12,8 @@ import frc.robot.Constants.DriveConstants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
-  public final CANSparkMax smOne;
-  public final CANSparkMax smTwo;
+  public final CANSparkMax smOne, smTwo;
+
 
   public ShooterSubsystem() {
     smOne = new CANSparkMax(ShooterConstants.shootOne, MotorType.kBrushed);
