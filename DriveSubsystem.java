@@ -6,25 +6,31 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriveConstants.PID;
 
 public class DriveSubsystem extends SubsystemBase {
     // Right Motors
-    private final CANSparkMax rRMotor = new CANSparkMax(DriveConstants.rR, MotorType.kBrushed);
-    private final CANSparkMax rFMotor = new CANSparkMax(DriveConstants.rF, MotorType.kBrushed);
+    private final CANSparkMax rRM = new CANSparkMax(DriveConstants.rR, MotorType.kBrushed);
+    private final CANSparkMax rFM = new CANSparkMax(DriveConstants.rF, MotorType.kBrushed);
 
     // Left Motors 
-    private final CANSparkMax lRMotor = new CANSparkMax(DriveConstants.lR, MotorType.kBrushed);
-    private final CANSparkMax lFMotor = new CANSparkMax(DriveConstants.lF, MotorType.kBrushed);
+    private final CANSparkMax lRM = new CANSparkMax(DriveConstants.lR, MotorType.kBrushed);
+    private final CANSparkMax lFM = new CANSparkMax(DriveConstants.lF, MotorType.kBrushed);
 
     // Drive
-    private final DifferentialDrive drive = new DifferentialDrive(lRMotor::set, rRMotor::set); // Creates Leaders
+    private final DifferentialDrive drive = new DifferentialDrive(lRM::set, rRM::set); // Creates Leaders
+    private final PIDController turnPID = new PIDController(PID.TurnP, PID.TurnI, PID.TurnD);
+    private final SparkPIDController rRMPID, rFMPID, lRMPID, lFMPID;
 
     // Left Encoder
     private final Encoder leftEncoder = new Encoder(
@@ -45,16 +51,38 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   public DriveSubsystem() {
+    rRMPID = rRM.getPIDController();
+    rFMPID = rFM.getPIDController();
+    lRMPID = lRM.getPIDController();
+    lFMPID = lFM.getPIDController();
+
+    rRMPID.setP(PID.TurnP);
+    rRMPID.setI(PID.TurnI);
+    rRMPID.setD(PID.TurnD);
+    
+    rFMPID.setP(PID.TurnP);
+    rFMPID.setI(PID.TurnI);
+    rFMPID.setD(PID.TurnD);
+    
+    lRMPID.setP(PID.TurnP);
+    lRMPID.setI(PID.TurnI);
+    lRMPID.setD(PID.TurnD);
+    
+    lFMPID.setP(PID.TurnP);
+    lFMPID.setI(PID.TurnI);
+    lFMPID.setD(PID.TurnD);
+
+
     // Registers Sensors For Use On Dashboards
-    SendableRegistry.addChild(drive, rRMotor);
-    SendableRegistry.addChild(drive, lRMotor);
+    SendableRegistry.addChild(drive, rRM);
+    SendableRegistry.addChild(drive, lRM);
     
     // Motors Follow Leaders
-    rFMotor.follow(rRMotor);
-    lFMotor.follow(lRMotor);
+    rFM.follow(rRM);
+    lFM.follow(lRM);
 
     // Inverts One Motor
-    rRMotor.setInverted(true);
+    rRM.setInverted(true);
 
     //Encoders Distance Per Pulse
     leftEncoder.setDistancePerPulse(DriveConstants.EncoderDistancePerPulse);
@@ -103,6 +131,10 @@ public class DriveSubsystem extends SubsystemBase {
   // Returns turn rate of robot                                                                       //
   public double getTurnRate() {                                                                       //
     return gyro.getRate() * (DriveConstants.gyroReversed ? -1.0 : 1.0);                               //
+  }                                                                                                   //
+  public void outputValues() {                                                                        //
+    SmartDashboard.putNumber("GyroYawAngle", gyro.getYaw());                                      //
+    SmartDashboard.putNumber("GyroRollAngle", gyro.getRoll());                                    //
   }                                                                                                   //
 //////////END////////////////////////OF/////////////////////GYRO////////////////////////////////////////
   
