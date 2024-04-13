@@ -8,7 +8,7 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants.ShooterConstants;
 import frc.robot.Constants.DriveConstants.XboxPorts;
 import frc.robot.commands.Autos;
-
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +31,7 @@ private final ShooterSubsystem shoot = new ShooterSubsystem();
 
   CommandXboxController xbox1 = new CommandXboxController(XboxPorts.xbox1);
   CommandXboxController xbox2 = new CommandXboxController(XboxPorts.xbox2);
+  
   public RobotContainer() {
     configureBindings();
 
@@ -55,7 +56,7 @@ private final ShooterSubsystem shoot = new ShooterSubsystem();
    * joysticks}.
    */
   private void configureBindings() {
-    (xbox1.rightTrigger()).onTrue(new InstantCommand(
+    xbox1.rightTrigger().onTrue(new InstantCommand(
       () -> {shoot.smTwo.set(1);}
       )).onTrue(new WaitCommand(3.0).andThen(
         new InstantCommand(() -> 
@@ -64,6 +65,18 @@ private final ShooterSubsystem shoot = new ShooterSubsystem();
         shoot.smOne.set(0);
         shoot.smTwo.set(0);
       }));
+        xbox1.leftTrigger().onTrue(new InstantCommand(
+      () -> {shoot.smTwo.set(-1);
+             shoot.smOne.set(-1);}
+      ));
+
+
+    
+    xbox1.a().onTrue(new TurnToAngle(90, robotDrive));
+
+
+
+    
   }
 
   /**
